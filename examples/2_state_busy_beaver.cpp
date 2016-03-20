@@ -6,10 +6,10 @@
 ADD_STATE(A);
 ADD_STATE(B);
 
-ADD_RULE(A, 0, 1, Right, B);
+ADD_RULE(A, Blank, 1, Right, B);
 ADD_RULE(A, 1, 1, Left, B);
 
-ADD_RULE(B, 0, 1, Left, A);
+ADD_RULE(B, Blank, 1, Left, A);
 ADD_RULE(B, 1, 1, Right, Stop);
 
 using tape = Tape<Blank>;
