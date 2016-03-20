@@ -30,3 +30,5 @@ This particular program makes an inversion of the tape until it reaches a blank 
 ```
 
 All the work is performed before the program is even launched. Please look into examples for more advanced stuff like busy beavers. Your programs are welcome, feel free to make a pull request!
+
+Here is a blog post with a thorough explanation of the underlying mechanics: http://victorkomarov.blogspot.ru/2016/03/compile-time-turing-machine.html
