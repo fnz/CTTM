@@ -1,37 +1,96 @@
 #pragma once
 
 #include <iostream>
+#include <type_traits>
+
+#pragma mark - Blank
+
+constexpr int Blank = -1;
+
+#pragma mark - const_string
+
+#include <array>
+
+template<char... cs>
+struct const_string {
+  const static size_t length = sizeof...(cs);
+  constexpr static std::array<char, length+1> toCStr() {
+    return {{cs...}};
+  }
+};
+
+template<class... ss>
+struct const_concat {};
+
+template<char... cs1, char... cs2, class... ss>
+struct const_concat<const_string<cs1...>, const_string<cs2...>, ss...>
+  : public const_concat<const_string<cs1..., cs2...>, ss...> {};
+
+template<char... cs>
+struct const_concat<const_string<cs...>>
+{
+  using type = const_string<cs...>;
+};
+
+struct positive{};
+struct negative{};
+
+template<int i, class Sign = positive, char... cs>
+struct itocs : public itocs<i/10, Sign, '0'+i%10, cs...> {};
+
+template<char... cs>
+struct itocs<0, positive, cs...> {
+  using type = const_string<cs...>;
+};
+
+template<char... cs>
+struct itocs<0, negative, cs...> {
+  using type = const_string<'-', cs...>;
+};
+
+template<>
+struct itocs<Blank, positive> {
+  using type = const_string<'_'>;
+};
+
+template<>
+struct itocs<0, positive> {
+  using type = const_string<'0'>;
+};
+
+template<int i>
+struct itocs<i, typename std::enable_if<i < 0, positive>::type> : public itocs<-i, negative> {};
 
 #pragma mark - Tape
 
-constexpr int Blank = -1;
+template<int... xs>
+class Tape;
+
+template<class T, class S=const_string<>>
+struct tape_to_cstring {};
+
+template<int x, char... cs>
+struct tape_to_cstring<Tape<x>, const_string<cs...>> {
+  using type = typename const_concat< const_string<cs...>, const_string<' '>, typename itocs<x>::type>::type;
+};
+
+template<int x, int... xs, char... cs>
+struct tape_to_cstring<Tape<x, xs...>,const_string<cs...>>
+  : tape_to_cstring<Tape<xs...>, typename const_concat<const_string<cs...>, const_string<' '>, typename itocs<x>::type>::type>{};
+
+template<int x, int... xs>
+struct tape_to_cstring<Tape<x, xs...>,const_string<>>
+  : tape_to_cstring<Tape<xs...>, typename const_concat<typename itocs<x>::type>::type>{};
 
 template<int... xs>
 class Tape {
 public:
     using type = Tape<xs...>;
     constexpr static int length = sizeof...(xs);
-};
-
-#pragma mark - Print
-
-template<class T>
-void print(T);
-
-template<>
-void print(Tape<>) {
-    std::cout << std::endl;
-}
-
-template<int x, int... xs>
-void print(Tape<x, xs...>) {
-    if (x == Blank) {
-        std::cout << "_ ";
-    } else {
-        std::cout << x << " ";
+    static void print() {
+      std::cout << tape_to_cstring<Tape>::type::toCStr().data() << std::endl;
     }
-    print(Tape<xs...>());
-}
+};
 
 #pragma mark - Concatenate
 

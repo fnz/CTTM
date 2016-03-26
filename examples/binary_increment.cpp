@@ -33,11 +33,11 @@ public:
 using tape = Tape<Blank, 1, 1, 0, Blank>;
 
 int main() {
-    print(tape());
-    print(Increment<tape>::type());
-    print(Increment<Increment<tape>::type>::type());
-    print(Increment<Increment<Increment<tape>::type>::type>::type());
-    print(Increment<Increment<Increment<Increment<tape>::type>::type>::type>::type());
-    print(Increment<Increment<Increment<Increment<Increment<tape>::type>::type>::type>::type>::type());
+    tape::print();
+    Increment<tape>::type::print();
+    Increment<Increment<tape>::type>::type::print();
+    Increment<Increment<Increment<tape>::type>::type>::type::print();
+    Increment<Increment<Increment<Increment<tape>::type>::type>::type>::type::print();
+    Increment<Increment<Increment<Increment<Increment<tape>::type>::type>::type>::type>::type::print();
     return 0;
 }

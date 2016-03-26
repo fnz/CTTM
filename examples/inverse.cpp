@@ -14,7 +14,7 @@ using machine = Machine<A, 0, tape>;
 using result = Run<machine>::type;
 
 int main() {
-    print(tape());
-    print(result());
+    tape::print();
+    result::print();
     return 0;
 }
